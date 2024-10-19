@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADI PREDICTOR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #37474f, #263238, #1c313a);
+            color: #e3f2fd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0a0a0a;
+        }
+
+        .page {
+            text-align: center;
+            width: 350px;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #00e676;
+            text-shadow: 0 0 10px #00e676, 0 0 20px #00e676;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            padding: 20px;
+            background: rgba(38, 50, 56, 0.8);
+            border-radius: 20px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        input, button {
+            padding: 15px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 10px;
+            border: none;
+            background-color: #1c313a;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #64b5f6;
+            color: #ffffff;
+            cursor: pointer;
+            transition: 0.3s;
+            text-shadow: 0 0 10px #42a5f5, 0 0 20px #42a5f5;
+        }
+
+        button:hover {
+            background-color: #42a5f5;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 28px;
+            color: #00e676;
+            text-shadow: 0 0 10px #00e676, 0 0 20px #00e676;
+        }
+
+        #processingAnimation {
+            font-size: 20px;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+            color: #00bcd4;
+            text-shadow: 0 0 10px #00bcd4, 0 0 20px #00bcd4;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #expiryMessage {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #f44336;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginPage" class="page">
+        <h1>ADI PREDICTOR</h1>
+        <div class="container">
+            <h2>Login</h2>
+            <input type="password" id="keyInput" placeholder="Enter your key" />
+            <button onclick="validateKey()">Login</button>
+            <p id="loginError"></p>
+        </div>
+    </div>
+
+    <div id="predictionPage" class="page hidden">
+        <h1>ADI PREDICTOR</h1>
+        <div class="container">
+            <h2>Prediction</h2>
+            <input type="text" id="numberInput" placeholder="Enter a 3-digit number" maxlength="3" />
+            <button onclick="startPrediction()">Predict</button>
+            <div id="processingAnimation" class="hidden">Processing...</div>
+            <div id="resultContainer">
+                <p id="result">Prediction ➪ </p>
+            </div>
+        </div>
+        <p id="expiryMessage"></p>
+        <button onclick="window.location.href='https://t.me/adityahackerr'">Join Telegram</button>
+        <button onclick="window.location.href='https://diuwin.bet/#/register?invitationCode=353811128557'">Register</button>
+    </div>
+
+    <script>
+        // Key expiration logic
+        const expirationTime = 99999999999999999999999999999999999 * 24 * 60 * 60 * 1000; // 999999999999999999999999999 days in milliseconds
+        let expiryDate = Date.now() + expirationTime;
+
+        function updateExpiryMessage() {
+            const now = Date.now();
+            const remainingTime = expiryDate - now;
+
+            if (remainingTime <= 0) {
+                document.getElementById('expiryMessage').textContent = "Key has expired.";
+                document.getElementById('predictionPage').classList.add('hidden');
+                document.getElementById('loginPage').classList.remove('hidden');
+            } else {
+                const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                document.getElementById('expiryMessage').textContent = `Key expires in: ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        // Validate the login key
+        function validateKey() {
+            const keyInput = document.getElementById('keyInput').value;
+
+            if (keyInput === 'ADIXPREDICTOR') {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('predictionPage').classList.remove('hidden');
+                setInterval(updateExpiryMessage, 1000);
+            } else {
+                document.getElementById('loginError').textContent = "Invalid key. Please try again.";
+            }
+        }
+
+        // Prediction logic
+        function digitSum(number) {
+            return [...number].reduce((acc, digit) => acc + parseInt(digit), 0);
+        }
+
+        function resultFormatter(sumValue) {
+            const lastDigit = sumValue % 10;
+            return lastDigit % 2 === 0 ? 'Small' : 'Big';
+        }
+
+        function startPrediction() {
+            const number = document.getElementById('numberInput').value;
+            if (number.length !== 3 || isNaN(number)) {
+                alert("Invalid input! Please enter a 3-digit number.");
+                return;
+            }
+
+            document.getElementById('processingAnimation').classList.remove('hidden');
+            document.getElementById('result').textContent = "Prediction ➪ ";
+
+            setTimeout(() => {
+                const totalSum = digitSum(number);
+                const result = resultFormatter(totalSum);
+                document.getElementById('result').textContent = `Prediction ➪ ${result}`;
+                document.getElementById('processingAnimation').classList.add('hidden');
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>
